@@ -19,12 +19,15 @@ export function useIngestion() {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
 
-  // helper to add to event log
+  const MAX_EVENTS = 50;
+
   function addEvent(type, data) {
-    setEvents((prev) => [
-      { id: Date.now(), type, data, timestamp: new Date().toISOString() },
-      ...prev, // newest first
-    ]);
+    setEvents((prev) =>
+      [
+        { id: Date.now(), type, data, timestamp: new Date().toISOString() },
+        ...prev,
+      ].slice(0, MAX_EVENTS),
+    );
   }
 
   useEffect(() => {
