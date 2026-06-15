@@ -82,45 +82,51 @@ export function EventLog({ events }) {
   }
 
   return (
-    <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
-      {events.map((event) => {
-        const config = EVENT_CONFIG[event.type] ?? {
-          label: event.type,
-          color: "text-gray-700",
-          bg: "bg-gray-50",
-          border: "border-gray-200",
-          icon: "📋",
-        };
+    <div className="flex flex-col gap-2">
+      {events.length >= 50 && (
+        <p className="text-xs text-gray-400 text-center">
+          Showing latest 50 events
+        </p>
+      )}
 
-        return (
-          <div
-            key={event.id}
-            className={[
-              "flex items-start gap-3 px-3 py-2 rounded-lg border text-xs",
-              config.bg,
-              config.border,
-            ].join(" ")}
-          >
-            {/* icon */}
-            <span className="text-base shrink-0">{config.icon}</span>
+      <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+        {events.map((event) => {
+          const config = EVENT_CONFIG[event.type] ?? {
+            label: event.type,
+            color: "text-gray-700",
+            bg: "bg-gray-50",
+            border: "border-gray-200",
+            icon: "📋",
+          };
 
-            {/* content */}
-            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-2">
-                <span className={["font-semibold", config.color].join(" ")}>
-                  {config.label}
-                </span>
-                <span className="text-gray-400 shrink-0">
-                  {formatTime(event.timestamp)}
-                </span>
+          return (
+            <div
+              key={event.id}
+              className={[
+                "flex items-start gap-3 px-3 py-2 rounded-lg border text-xs",
+                config.bg,
+                config.border,
+              ].join(" ")}
+            >
+              <span className="text-base shrink-0">{config.icon}</span>
+
+              <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className={["font-semibold", config.color].join(" ")}>
+                    {config.label}
+                  </span>
+                  <span className="text-gray-400 shrink-0">
+                    {formatTime(event.timestamp)}
+                  </span>
+                </div>
+                <p className="text-gray-500 truncate">
+                  {formatData(event.type, event.data)}
+                </p>
               </div>
-              <p className="text-gray-500 truncate">
-                {formatData(event.type, event.data)}
-              </p>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
