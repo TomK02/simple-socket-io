@@ -1,7 +1,9 @@
 import { createServer } from "node:http";
-import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
+import { Server } from "socket.io";
+
+import { metricsMiddleware } from "./middleware/metrics.js";
 
 export function createApp() {
   const app = express();
@@ -23,6 +25,7 @@ export function createApp() {
   );
 
   app.use(express.json());
+  app.use(metricsMiddleware(io));
 
   io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);

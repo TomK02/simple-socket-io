@@ -3,6 +3,7 @@ import { FileUpload } from "./components/FileUpload";
 import { ProgressBar } from "./components/ProgressBar";
 import { StatsDisplay } from "./components/StatsDisplay";
 import { EventLog } from "./components/EventLog";
+import { MetricsDashboard } from "./components/MetricsDashboard"; // add
 
 const STATUS_LABEL = {
   idle: "Ready",
@@ -116,6 +117,10 @@ export default function App() {
           </div>
           <EventLog events={events} />
         </div>
+
+        <div className="border-t border-gray-200" />
+
+        <MetricsDashboard />
       </div>
     </div>
   );

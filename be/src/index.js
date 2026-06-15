@@ -1,5 +1,6 @@
 import { createApp } from "./server.js";
 import { csvRoutes } from "./routes/csv.routes.js";
+import { metricsRoutes } from "./routes/metrics.routes.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -7,6 +8,7 @@ async function bootstrap() {
   const { app, httpServer, io } = createApp();
 
   app.use("/api", csvRoutes(io));
+  app.use("/api", metricsRoutes(io));
   app.get("/health", (req, res) => {
     res.json({ status: "ok" });
   });
