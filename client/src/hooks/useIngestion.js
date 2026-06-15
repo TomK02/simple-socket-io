@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:4000";
+const SOCKET_URL = "http://localhost:3000";
 const MAX_EVENTS = 50;
 
 export function useIngestion() {
