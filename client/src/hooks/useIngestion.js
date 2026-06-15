@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:3000";
+const SOCKET_URL = "http://localhost:4000";
+const MAX_EVENTS = 50;
 
 export function useIngestion() {
   const socketRef = useRef(null);
+  const abortRef = useRef(null);
 
-  const [status, setStatus] = useState("idle");
   // idle | uploading | processing | complete | failed
-
+  const [status, setStatus] = useState("idle");
   const [progress, setProgress] = useState({
     processed: 0,
     valid: 0,
@@ -18,8 +19,6 @@ export function useIngestion() {
   const [stats, setStats] = useState(null);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
-
-  const MAX_EVENTS = 50;
 
   function addEvent(type, data) {
     setEvents((prev) =>
@@ -68,7 +67,10 @@ export function useIngestion() {
   async function uploadFile(file) {
     if (!file) return;
 
-    // reset state
+    // create new controller for this upload
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setStatus("uploading");
     setProgress({ processed: 0, valid: 0, failed: 0 });
     setStats(null);
@@ -82,6 +84,7 @@ export function useIngestion() {
       const res = await fetch(`${SOCKET_URL}/api/parse-csv`, {
         method: "POST",
         body: formData,
+        signal: controller.signal, // attach signal to fetch
       });
 
       if (!res.ok) {
@@ -91,11 +94,26 @@ export function useIngestion() {
 
       const data = await res.json();
       addEvent("uploaded", { fileId: data.fileId });
-      setStatus("processing"); // waiting for socket events
+      setStatus("processing");
     } catch (err) {
+      // AbortError means user cancelled, not a real error
+      if (err.name === "AbortError") {
+        setStatus("idle");
+        addEvent("cancelled", {});
+        return;
+      }
+
       setStatus("failed");
       setError(err.message);
       addEvent("failed", { error: err.message });
+    } finally {
+      abortRef.current = null; // clean up ref
+    }
+  }
+
+  function cancel() {
+    if (abortRef.current) {
+      abortRef.current.abort();
     }
   }
 
@@ -106,5 +124,6 @@ export function useIngestion() {
     events,
     error,
     uploadFile,
+    cancel,
   };
 }

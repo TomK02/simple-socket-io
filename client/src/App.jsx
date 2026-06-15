@@ -21,7 +21,8 @@ const STATUS_COLOR = {
 };
 
 export default function App() {
-  const { status, progress, stats, events, error, uploadFile } = useIngestion();
+  const { status, progress, stats, events, error, uploadFile, cancel } =
+    useIngestion();
 
   const isProcessing = status === "uploading" || status === "processing";
   const showProgress = isProcessing || status === "complete";
@@ -32,29 +33,40 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="w-full max-w-2xl flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-gray-900">CSV Ingestion</h1>
-          <div className="flex items-center gap-2">
-            <div
-              className={[
-                "w-2 h-2 rounded-full",
-                status === "complete"
-                  ? "bg-green-500"
-                  : status === "failed"
-                    ? "bg-red-500"
-                    : isProcessing
-                      ? "bg-blue-500 animate-pulse"
-                      : "bg-gray-400",
-              ].join(" ")}
-            />
-            <p
-              className={["text-sm font-medium", STATUS_COLOR[status]].join(
-                " ",
-              )}
-            >
-              {STATUS_LABEL[status]}
-            </p>
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold text-gray-900">CSV Ingestion</h1>
+            <div className="flex items-center gap-2">
+              <div
+                className={[
+                  "w-2 h-2 rounded-full",
+                  status === "complete"
+                    ? "bg-green-500"
+                    : status === "failed"
+                      ? "bg-red-500"
+                      : isProcessing
+                        ? "bg-blue-500 animate-pulse"
+                        : "bg-gray-400",
+                ].join(" ")}
+              />
+              <p
+                className={["text-sm font-medium", STATUS_COLOR[status]].join(
+                  " ",
+                )}
+              >
+                {STATUS_LABEL[status]}
+              </p>
+            </div>
           </div>
+
+          {status === "uploading" && (
+            <button
+              onClick={cancel}
+              className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+            >
+              Cancel Upload
+            </button>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-4">
@@ -75,6 +87,7 @@ export default function App() {
             />
           </div>
         )}
+
         {showStats && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-4">
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
