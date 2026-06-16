@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "stress": "node --max-old-space-size=4096 scripts/stress-test.js 10000 --jitter",
-    "stress:connections": "node --max-old-space-size=4096 scripts/connection-stress.js 10000"
+    "stress:connections": "node --max-old-space-size=4096 scripts/connection-stress.js 10000",
+    "stress:memory-leak": "node --max-old-space-size=4096 scripts/memory-leak.js"
   },
   "keywords": [],
   "author": "",
