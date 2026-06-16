@@ -24,6 +24,8 @@ export function csvRoutes(io) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
+    const socketId = req.headers["x-socket-id"];
+
     const fileId = req.file.filename;
     const filePath = req.file.path;
 
@@ -45,10 +47,9 @@ export function csvRoutes(io) {
     });
 
     // process in background, don't await in request handler
-    ingestCSV(req.file.path, io)
-      .then((stats) => {
-        // notify all clients when done
-        io.emit("ingestion:complete", {
+    ingestCSV(filePath, io, socketId)
+      .then(async (stats) => {
+        io.to(socketId).emit("ingestion:complete", {
           fileId,
           stats,
           completedAt: new Date().toISOString(),
@@ -56,9 +57,7 @@ export function csvRoutes(io) {
       })
       .catch((err) => {
         console.error("Ingestion failed:", err);
-
-        // notify clients of failure
-        io.emit("ingestion:failed", {
+        io.to(socketId).emit("ingestion:failed", {
           fileId,
           error: err.message,
           failedAt: new Date().toISOString(),
@@ -70,8 +69,9 @@ export function csvRoutes(io) {
           await unlink(filePath);
           console.log(`Cleaned up temp file: ${filePath}`);
         } catch (err) {
-          // log but don't throw, cleanup failure shouldn't affect the response
-          console.error(`Failed to clean up temp file: ${filePath}`, err);
+          if (err.code !== "ENOENT") {
+            console.error(`Cleanup failed: ${filePath}`, err);
+          }
         }
       });
   });

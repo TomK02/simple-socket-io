@@ -85,6 +85,10 @@ export function useIngestion() {
         method: "POST",
         body: formData,
         signal: controller.signal, // attach signal to fetch
+        headers: {
+          // send socket id so BE knows who to emit to
+          "x-socket-id": socketRef.current?.id,
+        },
       });
 
       if (!res.ok) {

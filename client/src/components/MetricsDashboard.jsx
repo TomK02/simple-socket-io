@@ -8,11 +8,11 @@ export function MetricsDashboard() {
   const {
     metrics,
     requestLog,
-    isStreaming,
+    // isStreaming,
     error,
     fetchMetrics,
-    startStreaming,
-    stopStreaming,
+    // startStreaming,
+    // stopStreaming,
   } = useMetrics();
 
   // fetch snapshot on mount
@@ -44,7 +44,7 @@ export function MetricsDashboard() {
           </button>
 
           {/* stream toggle */}
-          {isStreaming ? (
+          {/* {isStreaming ? (
             <button
               onClick={stopStreaming}
               className="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
@@ -58,7 +58,7 @@ export function MetricsDashboard() {
             >
               ▶ Start Stream
             </button>
-          )}
+          )} */}
         </div>
       </div>
 

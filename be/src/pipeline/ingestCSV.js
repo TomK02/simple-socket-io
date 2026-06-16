@@ -20,7 +20,7 @@ function validateRow(row) {
   return errors;
 }
 
-export async function ingestCSV(filePath, io) {
+export async function ingestCSV(filePath, io, socketId) {
   let headers = [];
   let isFirstLine = true;
   let lineBuffer = "";
@@ -97,7 +97,7 @@ export async function ingestCSV(filePath, io) {
           validBatch = [];
 
           // emit progress to all connected clients
-          io.emit("ingestion:progress", {
+          io.to(socketId).emit("ingestion:progress", {
             processed: stats.total,
             valid: stats.valid,
             failed: stats.failed,

@@ -8,7 +8,7 @@ export function useMetrics() {
   const socketRef = useRef(null);
   const [metrics, setMetrics] = useState(null);
   const [requestLog, setRequestLog] = useState([]);
-  const [isStreaming, setIsStreaming] = useState(false);
+  // const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -31,9 +31,9 @@ export function useMetrics() {
       addRequestLog(data);
     });
 
-    socket.on("metrics:stopped", () => {
-      setIsStreaming(false);
-    });
+    // socket.on("metrics:stopped", () => {
+    //   setIsStreaming(false);
+    // });
 
     return () => {
       socket.disconnect();
@@ -52,37 +52,37 @@ export function useMetrics() {
     }
   }
 
-  // start real time streaming
-  async function startStreaming(interval = 5000) {
-    try {
-      await fetch(
-        `${SOCKET_URL}/api/metrics/stream/start?interval=${interval}`,
-      );
-      setIsStreaming(true);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    }
-  }
+  // // start real time streaming
+  // async function startStreaming(interval = 5000) {
+  //   try {
+  //     await fetch(
+  //       `${SOCKET_URL}/api/metrics/stream/start?interval=${interval}`,
+  //     );
+  //     setIsStreaming(true);
+  //     setError(null);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // }
 
-  // stop real time streaming
-  async function stopStreaming() {
-    try {
-      await fetch(`${SOCKET_URL}/api/metrics/stream/stop`);
-      setIsStreaming(false);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    }
-  }
+  // // stop real time streaming
+  // async function stopStreaming() {
+  //   try {
+  //     await fetch(`${SOCKET_URL}/api/metrics/stream/stop`);
+  //     setIsStreaming(false);
+  //     setError(null);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // }
 
   return {
     metrics,
     requestLog,
-    isStreaming,
+    // isStreaming,
     error,
     fetchMetrics,
-    startStreaming,
-    stopStreaming,
+    // startStreaming,
+    // stopStreaming,
   };
 }
