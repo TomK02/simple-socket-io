@@ -17,6 +17,10 @@ export function createApp() {
       origin: "http://localhost:5173",
       methods: ["GET", "POST"],
     },
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    upgradeTimeout: 30000,
+    perMessageDeflate: false,
   });
 
   app.use(
